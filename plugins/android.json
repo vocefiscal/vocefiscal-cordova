@@ -1,0 +1,24 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.sp.qrcode"
+        },
+        "org.apache.cordova.dialogs": {
+            "PACKAGE_NAME": "com.sp.qrcode"
+        },
+        "org.apache.cordova.inappbrowser": {
+            "PACKAGE_NAME": "com.sp.qrcode"
+        },
+        "phonegap-plugin-barcodescanner": {
+            "PACKAGE_NAME": "com.sp.qrcode"
+        }
+    },
+    "dependent_plugins": {}
+}
