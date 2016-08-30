@@ -78,6 +78,23 @@ h1 {
     text-align:center;
 }
 
+/*.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.fiscalizar {
+    border-radius: 12px;
+    width: %50;
+    font-size: 58px;
+}*/
+
 .event {
     border-radius:4px;
     -webkit-border-radius:4px;

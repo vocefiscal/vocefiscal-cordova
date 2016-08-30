@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.sp.qrcode" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>QRCodeReader</name>
+    <name>Você Fiscal!</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>
@@ -8,6 +8,7 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
+    <icon src="www/img/mushroom.png" platform="android" width="57" height="57" density="mdpi" />
     <plugin name="cordova-plugin-whitelist" version="1" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

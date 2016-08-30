@@ -4,35 +4,37 @@
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <title>QRCode Reader APP</title>
+        <title>Você Fiscal!</title>
     </head>
     <body>
 
         <div data-role="page" id="home">
             <div data-role="header">
-                <h1>Home</h1>
+                <center><h1>Olá,<wbr> bem vindo ao<br> Você Fiscal!</h1></center>
             </div>
 
             <div data-role="main" class="ui-content">
+                <p align= ”center”>
+                    <a target="_blank" href="javascript:scan();" style="text-decoration: none" ><center><button class="button fiscalizar">Fiscalizar</button></center></a>
+                </p>
                 <p>
-                    <a target="_blank" href="javascript:scan();" style="text-decoration: none"><button>Scan</button></a>
-                    <a target="_blank" href="#display" style="text-decoration: none"><button>Display Scanned Data</button></a>
+                    <a target="_blank" href="#display" style="text-decoration: none"><center><button>Transmitir</button></center></a>
                 </p>
             </div>
         </div>
 
         <div data-role="page" id="display">
             <div data-role="header">
-                <a target="_blank" href="#home" class="ui-btn ui-icon-home ui-btn-icon-left">Home</a>
-                <h1>Display</h1>
+                <a target="_blank" href="#home" class="ui-btn ui-icon-home ui-btn-icon-left">Inicio</a>
+                <h1>Dados Salvos:</h1>
             </div>
 
             <div data-role="main" class="ui-content">
                 <table data-role="table" data-mode="column" id="allTable" class="ui-responsive table-stroke">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Value</th>
+                            <th>Nome</th>
+                            <th>Código</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,9 +53,11 @@
                     function (result) {
                         if(!result.cancelled)
                         {
+                            navigator.notification.alert("Barcode type is: " + result.format,"","Leitura Efetuada","Ok");
+                            navigator.notification.alert("Decoded text is: " + result.text,"","Conteúdo","Ok");
                             if(result.format == "QR_CODE")
                             {
-                                navigator.notification.prompt("Please enter name of data",  function(input){
+                                navigator.notification.prompt("Por favor, insira um nome para o QRCode",  function(input){
                                     var name = input.input1;
                                     var value = result.text;
 
@@ -64,13 +68,29 @@
 
                                     localStorage.setItem("LocalData", JSON.stringify(data));
 
-                                    alert("Done");
-                                });
+                                    navigator.notification.alert("Concluido, obrigado!","","Sucesso!","Ok");
+
+                                },"Leitura",["Ok","Cancelar"],[]);
                             }
+                            if(result.format != "QR_CODE"){
+                                    var name = "Invalido";
+                                    var value = result.text;
+                                    var data = localStorage.getItem("LocalData");
+                                    console.log(data);
+                                    data = JSON.parse(data);
+                                    data[data.length] = [name, value];
+                                    localStorage.setItem("LocalData", JSON.stringify(data));
+
+                                    navigator.notification.alert("Concluido, obrigado!","","Sucesso!","Ok");
+                            }
+                        }
+                        else
+                        {
+                            navigator.notification.alert("Voce cancelou a leitura!","","Cancelado","Ok");
                         }
                     },
                     function (error) {
-                        alert("Scanning failed: " + error);
+                        navigator.notification.alert("Erro de leitura: " + error,"","Ocorreu um erro","Ok");
                     }
                );
             }
