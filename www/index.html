@@ -72,6 +72,9 @@
         <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
         <script type="text/javascript" src="cordova.js"></script>
         <script>
+
+            barcodescanner.hasCameraPermission().then( function(granted) { console.log("Has Camera Permission? " + result); });
+            barcodescanner.requestCameraPermission().then( function() { console.log("Camera permission requested"); });
             function scan()
             {
                 navigator.notification.confirm("Por favor, leia o primeiro QRCode", function(buttonIndex){ if(buttonIndex===1){ scan_command(); } } ,"Primeira Leitura", ["Ok","Cancel"] );
