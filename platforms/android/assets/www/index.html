@@ -5,20 +5,45 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <title>Você Fiscal!</title>
+        <style>
+            .button {
+                /*background-color: #4CAF50; cor do background verde*/
+                border: 5px solid black; /*none;*/ /*cor bordas*/
+                color: white; /*cor letras*/
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+            }
+
+            .fiscalizar {
+                border-radius: 8px;
+                /*border: 2px solid black;*/
+                /*padding: 32px 32px;*/
+                font-size: 23px;
+            }
+            .transmitir {
+                /*background-color:  #DAA520; golden rod*/
+                border-radius: 8px;
+                /*width: %100;*/
+                font-size: 23px;
+            }
+        </style>
     </head>
     <body>
 
         <div data-role="page" id="home">
             <div data-role="header">
-                <center><h1>Olá,<wbr> bem vindo ao<br> Você Fiscal!</h1></center>
+                <h1 style = "text-align:center" >Olá,<br> bem vindo ao<br>Você Fiscal!</h1>
             </div>
 
             <div data-role="main" class="ui-content">
-                <p align= ”center”>
-                    <a target="_blank" href="javascript:scan();" style="text-decoration: none" ><center><button class="button fiscalizar">Fiscalizar</button></center></a>
+                <p>
+                    <a target="_blank" href="javascript:scan();" style="text-decoration: none" ><center><button class="button fiscalizar"><b>Fiscalizar</b></button></center></a>
                 </p>
                 <p>
-                    <a target="_blank" href="#display" style="text-decoration: none"><center><button>Transmitir</button></center></a>
+                    <a target="_blank" href="#display" style="text-decoration: none"><center><button class="button transmitir"><b>Transmitir</b></button></center></a>
                 </p>
             </div>
         </div>
@@ -49,50 +74,64 @@
         <script>
             function scan()
             {
-                cordova.plugins.barcodeScanner.scan(
-                    function (result) {
-                        if(!result.cancelled)
-                        {
-                            navigator.notification.alert("Barcode type is: " + result.format,"","Leitura Efetuada","Ok");
-                            navigator.notification.alert("Decoded text is: " + result.text,"","Conteúdo","Ok");
-                            if(result.format == "QR_CODE")
+                navigator.notification.confirm("Por favor, leia o primeiro QRCode", function(buttonIndex){ if(buttonIndex===1){ scan_command(); } } ,"Primeira Leitura", ["Ok","Cancel"] );
+            }
+
+            function scan_command()
+            {
+                    cordova.plugins.barcodeScanner.scan(
+                    
+                        function (result) {
+                        
+                            if(!result.cancelled)
                             {
-                                navigator.notification.prompt("Por favor, insira um nome para o QRCode",  function(input){
-                                    var name = input.input1;
+
+                                if( result.format === "QR_CODE")
+                                {
                                     var value = result.text;
-
-                                    var data = localStorage.getItem("LocalData");
-                                    console.log(data);
-                                    data = JSON.parse(data);
-                                    data[data.length] = [name, value];
-
-                                    localStorage.setItem("LocalData", JSON.stringify(data));
-
-                                    navigator.notification.alert("Concluido, obrigado!","","Sucesso!","Ok");
-
-                                },"Leitura",["Ok","Cancelar"],[]);
-                            }
-                            if(result.format != "QR_CODE"){
-                                    var name = "Invalido";
-                                    var value = result.text;
+                                    var name = "QRCode";
                                     var data = localStorage.getItem("LocalData");
                                     console.log(data);
                                     data = JSON.parse(data);
                                     data[data.length] = [name, value];
                                     localStorage.setItem("LocalData", JSON.stringify(data));
-
-                                    navigator.notification.alert("Concluido, obrigado!","","Sucesso!","Ok");
+                                    navigator.notification.confirm( "Codigo do tipo QR Code: " + result.format , function(buttonIndex){ if(buttonIndex === 1){ case_qrcode( value ); } } ,"QR Code encontrado!", ["Ok","Cancel"] );
+                                }
+                                if(result.format != "QR_CODE"){
+                                /* apos a fase de testes mudar o bloco para loop ate achar qr code*/
+                                        var name = "Invalido";
+                                        var value = result.text;
+                                        var data = localStorage.getItem("LocalData");
+                                        console.log(data);
+                                        data = JSON.parse(data);
+                                        data[data.length] = [name, value];
+                                        localStorage.setItem("LocalData", JSON.stringify(data));
+                                        navigator.notification.confirm("Por favor, tente enquadrar melhor o código!", function(buttonIndex){ if(buttonIndex === 1){ scan_command(); } },"Não foi reconhecido!","Ok");
+                                }
                             }
+                            else
+                            {
+                                navigator.notification.alert("Você cancelou a leitura!","","Cancelado","Ok");
+                            }
+                        },
+                        function (error) {
+                            navigator.notification.alert("Erro de leitura: " + error,"","Ocorreu um erro","Ok");
                         }
-                        else
-                        {
-                            navigator.notification.alert("Voce cancelou a leitura!","","Cancelado","Ok");
-                        }
-                    },
-                    function (error) {
-                        navigator.notification.alert("Erro de leitura: " + error,"","Ocorreu um erro","Ok");
-                    }
-               );
+                    );
+            }
+            
+            function case_qrcode(text)
+            {
+                value = String(text);
+                if( value.startsWith("QRBU") ){ /*Problema nao entra nesse bloco*/
+                    var inter = value[5];
+                    var inter2 = value[7];
+                    if( inter != inter2 ){ 
+                        navigator.notification.confirm("Você leu o " + inter + "○ de" + inter2 + " . Por favor, leia todos os QR Codes!", function(buttonIndex){ if(buttonIndex===1){ scan_command(); } } ,"Quase lá", ["Ok","Cancel"] );
+                    }else{
+                        navigator.notification.alert("Concluido, obrigado!","","Sucesso!","Ok");
+                    };                
+                }
             }
 
             $(document).on("pagebeforeshow", "#display", function() {
@@ -113,10 +152,10 @@
 
             });
 
-            function openURL(url)
+            /*function openURL(url)
             {
                 window.open(url, '_blank', 'location=yes');
-            }
+            }*/ // Essa e a funcao responsavel por abrir as url dos qrcodes, comentei para nao abrir navegadores
 
             //initialize
             if(localStorage.getItem("LocalData") == null)
